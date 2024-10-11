@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+.dist-info/
+*.egg
+
+# Environment variables
+.env
+
+# Pytest cache
+.cache/
+*.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VS Code settings
+.vscode/
+.history/
+
+# SQLite database files
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# Other IDE specific files
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore all files in this directory
+# Comment out the next line if you want to keep the directory
+# *
