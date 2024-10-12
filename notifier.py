@@ -11,6 +11,7 @@ time_to_sleep = 5
 
 def fetch_rss_feed(url):
     feed = feedparser.parse(url)
+    # print(feed.entries)
     return feed.entries
 
 def store_sent_links(entries):
@@ -22,7 +23,7 @@ def store_sent_links(entries):
 def check_all_rss_feeds(feeds):
     # Get the current time in UTC with timezone awareness
     current_time = datetime.now(timezone.utc)
-    cutoff_time = current_time - timedelta(hours=1)
+    cutoff_time = current_time - timedelta(hours=12)
 
     for feed_url in feeds:
         entries = fetch_rss_feed(feed_url)
@@ -31,7 +32,8 @@ def check_all_rss_feeds(feeds):
 
         for entry in entries:
             entry_time = datetime.fromtimestamp(time.mktime(entry.published_parsed), timezone.utc)
-            if entry_time > cutoff_time and not has_been_sent(entry.link):
+            # if entry_time > cutoff_time and not has_been_sent(entry.link):
+            if True:
                 recent_entries.append(entry)
 
         if not recent_entries:
@@ -47,9 +49,13 @@ def check_all_rss_feeds(feeds):
         for entry in recent_entries:
             link = entry.link
             title = entry.title
+            published = entry.published
             
-            content = f"New post: {title}\n{link}"
-            send_to_telegram(content)  # Send to Telegram
+            content = f"New post: {title}\n{link}\n\nPublished:{published}"
+
+            telegram_content = telegram_message_widget(entry)
+            send_to_telegram(telegram_content)  # Send to Telegram
+            
             send_to_discord(content)    # Send to Discord
             time.sleep(time_to_sleep)    # Wait for timeToSleep seconds before the next message
 
@@ -57,6 +63,27 @@ def load_feeds_from_config():
     with open('config.json', 'r') as config_file:
         config = json.load(config_file)
     return config.get('feeds', [])
+
+def telegram_message_widget(entry):
+    """Format the message for Telegram using Markdown V2"""
+    link = entry.link
+    title = entry.title
+    published = entry.published
+    summary = entry.summary if 'summary' in entry else "No summary available"
+
+    # Customize message for Telegram using Markdown V2
+    content = (
+        f"*New Post*: _{title}_\n"  # Title in italics
+        f"📅 *Published*: _{published}_\n"  # Published date in italics
+        f"🔗 [Read more]({link})\n\n"  # Read more link
+        f"*Summary*: _{summary}_\n"  # Summary in italics
+    )
+
+    # Escape special characters for Markdown V2
+    content = content.replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace(']', '\\]').replace('(', '\\(').replace(')', '\\)').replace('~', '\\~').replace('>', '\\>').replace('`', '\\`')
+    
+    return content
+
 
 if __name__ == '__main__':
     initialize_db()

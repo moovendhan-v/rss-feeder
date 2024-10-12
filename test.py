@@ -1,4 +1,6 @@
 import os
+import feedparser
+import json
 
 def check_environment_variables():
     # List of required environment variables
@@ -15,5 +17,17 @@ def check_environment_variables():
         else:
             print(f"Warning: {var} is not set.")
 
+
+def fetch_rss_feed(url, output_file='rss_feed.json'):
+    feed = feedparser.parse(url)
+    entries = feed.entries
+    feed_data = [dict(entry) for entry in entries]
+    
+    with open(output_file, 'w') as json_file:
+        json.dump(feed_data, json_file, indent=4)
+    
+    print(f"Saved RSS feed to {output_file}")
+    return entries
+
 if __name__ == '__main__':
-    check_environment_variables()
+    fetch_rss_feed('https://www.gadgets360.com/rss/feeds')

@@ -13,8 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Install SQLite
 RUN apt-get update && apt-get install -y sqlite3
 
-# Copy the rest of the application code
-COPY . .
-
 # Command to run the notifier
-CMD ["python", "notifier.py"]
+CMD ["python3", "notifier.py"]

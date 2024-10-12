@@ -48,3 +48,5 @@ coverage.xml
 # Ignore all files in this directory
 # Comment out the next line if you want to keep the directory
 # *
+
+rss_feed.json
